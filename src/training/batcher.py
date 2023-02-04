@@ -27,7 +27,8 @@ class Batcher():
     
     def _batch_tokenize(self, batch, tokenizer):
         sentences = [b['text'] for b in batch]
-        inputs = tokenizer(sentences, padding=True, max_length=tokenizer.model_max_length, truncation=True, return_tensors="pt")
+        ml = tokenizer.model_max_length if tokenizer.model_max_length < 5000 else 512
+        inputs = tokenizer(sentences, padding=True, max_length=ml, truncation=True, return_tensors="pt")
         # import pdb; pdb.set_trace()
         ids = inputs['input_ids']
         mask = inputs['attention_mask']

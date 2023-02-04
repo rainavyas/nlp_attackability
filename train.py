@@ -11,7 +11,9 @@ from src.data.data_selector import select_data
 from src.training.batch_trainer import BatchTrainer as Trainer
 
 def base_name_creator(args):
-    base_name = f'{args.model_name}_{args.data_name}_pretrained{not args.not_pretrained}_seed{args.seed}'
+    mname = args.model_name
+    mname = '-'.join(mname.split('/'))
+    base_name = f'{mname}_{args.data_name}_pretrained{not args.not_pretrained}_seed{args.seed}'
     return base_name
 
 if __name__ == "__main__":
