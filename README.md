@@ -4,4 +4,4 @@ Identify which samples are the most and least susceptible to adversarial attacks
 
 # Requirements
 
-`pip install transformers textattack`
+`pip install transformers textattack datasets`
