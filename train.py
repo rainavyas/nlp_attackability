@@ -21,7 +21,6 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--out_dir', type=str, required=True, help='Specify dir to save model')
     commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-uncased')
     commandLineParser.add_argument('--data_name', type=str, required=True, help='e.g. rt')
-    commandLineParser.add_argument('--data_dir_path', type=str, required=False, help='path to data directory, e.g. data')
     commandLineParser.add_argument('--bs', type=int, default=8, help="Specify batch size")
     commandLineParser.add_argument('--epochs', type=int, default=5, help="Specify max epochs")
     commandLineParser.add_argument('--lr', type=float, default=0.00001, help="Specify learning rate")
@@ -29,9 +28,6 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--seed', type=int, default=1, help="Specify seed")
     commandLineParser.add_argument('--num_classes', type=int, default=2, help="Specify number of classes")
     commandLineParser.add_argument('--force_cpu', action='store_true', help='force cpu use')
-    commandLineParser.add_argument('--prune_method', required=False, type=str, help="How to prune each sample")
-    commandLineParser.add_argument('--kept_pos', type=str, default=['N', 'V', 'A', 'D'], nargs='+', help="If prune method is pos, specifiy pos to keep")
-    commandLineParser.add_argument('--prune_val', action='store_true', help='prune validation data too')
     commandLineParser.add_argument('--not_pretrained', action='store_true', help='do not use pretrained_model')
     args = commandLineParser.parse_args()
 
