@@ -29,11 +29,11 @@ if __name__ == "__main__":
     with open('CMDs/attack.cmd', 'a') as f:
         f.write(' '.join(sys.argv)+'\n')
 
-    # Get the device
-    if args.force_cpu:
-        device = torch.device('cpu')
-    else:
-        device = get_default_device()
+#     # Get the device
+#     if args.force_cpu:
+#         device = torch.device('cpu')
+#     else:
+#         device = get_default_device()
 
     # Load the test data or validation data
     if not args.val:
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     # Load model
     model = select_model(args.model_name, model_path=args.model_path, num_labels=args.num_classes)
-    model.to(device)
+#     model.to(device)
 
     # Get minimum perturbation sizes per sample
     perts = Attacker.get_all_pert_sizes([d['text'] for d in data], model, method=args.attack_method)
