@@ -5,8 +5,8 @@ import os
 import argparse
 
 from src.tools.tools import get_default_device
-from src.models.model_selector import model_sel
-from src.data.data_selector import data_sel
+from src.models.model_selector import select_model
+from src.data.data_selector import select_data
 from src.attack.attacker import Attacker
 
 if __name__ == "__main__":
@@ -37,12 +37,12 @@ if __name__ == "__main__":
 
     # Load the test data or validation data
     if not args.val:
-        data = data_sel(args.data_name, args.data_dir_path, train=False)
+        data = select_data(args, train=False)
     else:
-        _, data = data_sel(args.data_name, args.data_dir_path, train=True)
+        _, data = select_data(args, train=True)
 
     # Load model
-    model = model_sel(args.model_name, model_path=args.model_path, num_classes=args.num_classes)
+    model = select_model(args.model_name, model_path=args.model_path, num_labels=args.num_classes)
     model.to(device)
 
     # Get minimum perturbation sizes per sample

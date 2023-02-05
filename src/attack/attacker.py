@@ -7,17 +7,18 @@ from .redefined_textattack_models import TextFoolerJin2019
 class Attacker():
 
     @classmethod
-    def get_all_pert_sizes(cls, sentences, model, method='textfooler', sizes=[0.1, 0.3, 0.5, 0.7]):
+    def get_all_pert_sizes(cls, sentences, model, method='textfooler', sizes=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6]):
         '''
             Get minimum perturbation size (cosine distance) to successfully change prediction of a sample
         '''
         min_perts = []
         for sentence in tqdm(sentences):
             min_perts.append(cls.get_pert_size(sentence, model, method, sizes))
+            print(min_perts)
         return min_perts
 
     @classmethod
-    def get_pert_size(cls, sentence, model, method='textfooler', sizes=[0.1, 0.3, 0.5, 0.7]):
+    def get_pert_size(cls, sentence, model, method='textfooler', sizes=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6]):
         '''
             Find smallest perturbation to change output class
             sizes: pert sizes are the cosine distances (1-cos_sim) in an embedding space
@@ -26,8 +27,8 @@ class Attacker():
         '''
         # get original predicted class
         with torch.no_grad():
-            logits = cls.model.predict([sentence])[0].squeeze()
-            y = torch.argmax(logits).detach().cpu()
+            logits = model.predict([sentence])[0].squeeze()
+            y = torch.argmax(logits).detach().cpu().item()
 
         model_wrapper = PyTorchModelWrapper(model, model.tokenizer)
         for size in sizes:
@@ -52,7 +53,7 @@ class Attacker():
         updated_sentence = attack_result.perturbed_text()
         with torch.no_grad():
             logits = model.predict([updated_sentence])[0].squeeze()
-            y_attack = torch.argmax(logits).detach().cpu()
+            y_attack = torch.argmax(logits).detach().cpu().item()
         if y_attack != y:
             return True
         return False
