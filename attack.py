@@ -21,6 +21,9 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--force_cpu', action='store_true', help='force cpu use')
     commandLineParser.add_argument('--val', action='store_true', help='apply attack to validation data')
     commandLineParser.add_argument('--attack_method', type=str, default='textfooler', help="Specify attack method")
+    commandLineParser.add_argument('--batch', action='store_true', help='apply attack to batch of the data')
+    commandLineParser.add_argument('--start', type=int, required=False, default=0, help='start of batch')
+    commandLineParser.add_argument('--end', type=int, required=False, default=1000, help='end of batch')
     args = commandLineParser.parse_args()
 
     # Save the command run
@@ -56,4 +59,6 @@ if __name__ == "__main__":
     mname = args.model_name
     mname = '-'.join(mname.split('/'))
     out_file = f'{args.out_dir}/{args.attack_method}_{mname}_{args.data_name}.pt'
+    if args.batch:
+        out_file = f'{args.out_dir}/{args.attack_method}_{mname}_{args.data_name}_{args.start}-{args.end}.pt'
     torch.save(perts, out_file)

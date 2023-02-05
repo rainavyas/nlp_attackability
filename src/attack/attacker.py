@@ -55,5 +55,8 @@ class Attacker():
             logits = model.predict([updated_sentence])[0].squeeze()
             y_attack = torch.argmax(logits).detach().cpu().item()
         if y_attack != y:
+            print(sentence)
+            print('\n')
+            print(updated_sentence)
             return True
         return False
