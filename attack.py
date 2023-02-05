@@ -39,7 +39,7 @@ if __name__ == "__main__":
     if not args.val:
         data = select_data(args, train=False)
     else:
-        _, data = select_data(args, train=True)
+        data, _ = select_data(args, train=True)
 
     # Load model
     model = select_model(args.model_name, model_path=args.model_path, num_labels=args.num_classes)
