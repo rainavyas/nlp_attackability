@@ -18,7 +18,8 @@ class SequenceClassifier(nn.Module):
         return self.model(input_ids, attention_mask=attention_mask)[0]
     
     def predict(self, sentences, output_attentions=False, output_hidden_states=False, return_dict=False, device=torch.device('cpu')):
-        inputs = self.tokenizer(sentences, padding=True, max_length=self.tokenizer.model_max_length, truncation=True, return_tensors="pt")
+        ml = self.tokenizer.model_max_length if self.tokenizer.model_max_length < 5000 else 512
+        inputs = self.tokenizer(sentences, padding=True, max_length=ml, truncation=True, return_tensors="pt")
         input_ids = inputs['input_ids']
         attention_mask = inputs['attention_mask']
 

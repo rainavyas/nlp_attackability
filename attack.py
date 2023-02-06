@@ -43,13 +43,16 @@ if __name__ == "__main__":
         data = select_data(args, train=False)
     else:
         data, _ = select_data(args, train=True)
+    if args.batch:
+        data = data[args.start:args.end]
 
     # Load model
     model = select_model(args.model_name, model_path=args.model_path, num_labels=args.num_classes)
 #     model.to(device)
 
     # Get minimum perturbation sizes per sample
-    perts = Attacker.get_all_pert_sizes([d['text'] for d in data], model, method=args.attack_method)
+    sentences = [d['text'] for d in data]
+    perts = Attacker.get_all_pert_sizes(sentences, model, method=args.attack_method)
     perts = torch.Tensor(perts)
 
     # Report mean and standard deviation

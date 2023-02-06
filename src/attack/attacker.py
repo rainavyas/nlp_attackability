@@ -1,5 +1,6 @@
 import torch
 from tqdm import tqdm
+import numpy as np
 
 from .model_wrapper import PyTorchModelWrapper
 from .redefined_textattack_models import TextFoolerJin2019
@@ -14,7 +15,7 @@ class Attacker():
         min_perts = []
         for sentence in tqdm(sentences):
             min_perts.append(cls.get_pert_size(sentence, model, method, sizes))
-            print(min_perts)
+            # print(min_perts)
         return min_perts
 
     @classmethod
@@ -33,7 +34,7 @@ class Attacker():
         model_wrapper = PyTorchModelWrapper(model, model.tokenizer)
         for size in sizes:
             attack =  cls._construct_attack(model_wrapper, method, size)
-            if cls._can_attack(sentence, y, attack, model):
+            if cls._can_attack(sentence, y, attack):
                 return size
         return 2.0
 
@@ -42,21 +43,50 @@ class Attacker():
     def _construct_attack(model_wrapper, method, pert_size):
         if method == 'textfooler':
             cos_sim = 1-pert_size
-            return TextFoolerJin2019.build(model_wrapper, min_cos_sim=cos_sim)
+            attack = TextFoolerJin2019.build(model_wrapper, min_cos_sim=cos_sim)
+        return attack
 
     @staticmethod
-    def _can_attack(sentence, y, attack, model):
+    def _can_attack(sentence, y, attack):
         '''
             Return True if sentence can be attacked: y_attack differs from y
         '''
         attack_result = attack.attack(sentence, y)
-        updated_sentence = attack_result.perturbed_text()
-        with torch.no_grad():
-            logits = model.predict([updated_sentence])[0].squeeze()
-            y_attack = torch.argmax(logits).detach().cpu().item()
-        if y_attack != y:
-            print(sentence)
-            print('\n')
-            print(updated_sentence)
-            return True
-        return False
+        out = attack_result.goal_function_result_str()
+        if 'FAILED' in out:
+            return False
+        return True
+
+    @staticmethod
+    def attack_frac_sweep(perts, start=0.0, end=0.38, num=200):
+        '''
+        Return fraction of attackable samples at each perturbation size threshold
+        '''
+        threshs = np.linspace(start, end, num)
+        size = len(perts)
+        frac_attackable = []
+        for t in threshs:
+            num_att = len([p for p in perts if p<=t])
+            frac_attackable.append(num_att/size)
+        return threshs, frac_attackable
+
+    @staticmethod
+    def attack_frac_sweep_all(perts_all, start=0.0, end=0.65, num=100):
+        '''
+        Return fraction of attackable samples (over all models) at each perturbation size threshold
+        '''
+        threshs = np.linspace(start, end, num)
+        size = len(perts_all[0])
+        frac_attackable = []
+        for t in threshs:
+            num_att = 0
+            for sample in zip(*perts_all):
+                smaller = True
+                for pert in sample:
+                    if pert > t:
+                        smaller = False
+                        break
+                if smaller:
+                    num_att+=1
+            frac_attackable.append(num_att/size)
+        return threshs, frac_attackable
