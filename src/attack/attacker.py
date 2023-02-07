@@ -58,11 +58,10 @@ class Attacker():
         return True
 
     @staticmethod
-    def attack_frac_sweep(perts, start=0.0, end=0.38, num=200):
+    def attack_frac_sweep(perts, threshs=[0.001, 0.101, 0.201, 0.301, 0.401, 0.501, 0.601]):
         '''
         Return fraction of attackable samples at each perturbation size threshold
         '''
-        threshs = np.linspace(start, end, num)
         size = len(perts)
         frac_attackable = []
         for t in threshs:
@@ -71,11 +70,10 @@ class Attacker():
         return threshs, frac_attackable
 
     @staticmethod
-    def attack_frac_sweep_all(perts_all, start=0.0, end=0.65, num=100):
+    def attack_frac_sweep_all(perts_all, , threshs=[0.001, 0.101, 0.201, 0.301, 0.401, 0.501, 0.601]):
         '''
         Return fraction of attackable samples (over all models) at each perturbation size threshold
         '''
-        threshs = np.linspace(start, end, num)
         size = len(perts_all[0])
         frac_attackable = []
         for t in threshs:
