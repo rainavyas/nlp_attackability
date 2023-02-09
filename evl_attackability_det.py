@@ -26,7 +26,7 @@ if __name__ == "__main__":
     # Get command line arguments
     commandLineParser = argparse.ArgumentParser()
     commandLineParser.add_argument('--model_paths', type=str, nargs='+', required=True, help='Specify trained attackability models, list if ensemble')
-    commandLineParser.add_argument('--model_names', type=str, nargs='+', required=True, help='e.g. vgg16, list multiple if ensemble of detectors')
+    commandLineParser.add_argument('--model_names', type=str, nargs='+', required=True, help='e.g. bert-base-uncased, list multiple if ensemble of detectors')
     commandLineParser.add_argument('--data_name', type=str, required=True, help='e.g. sst')
     commandLineParser.add_argument('--perts', type=str, required=True, nargs='+', help='paths to perturbations')
     commandLineParser.add_argument('--thresh', type=float, default=0.2, help="Specify imperceptibility threshold")
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--force_cpu', action='store_true', help='force cpu use')
     commandLineParser.add_argument('--robust', action='store_true', help='train to identify robust samples')
     commandLineParser.add_argument('--trained_model_paths', type=str, nargs='+', required=True, help='paths to trained models for embedding linear classifiers')
-    commandLineParser.add_argument('--num_classes', type=int, default=10, help="Specify number of classes in data for trained_model_paths")
+    commandLineParser.add_argument('--num_classes', type=int, default=2, help="Specify number of classes in data for trained_model_paths")
     commandLineParser.add_argument('--spec', action='store_true', help='if mulitple models passed in perts, last model is target. Label attackable sample only if attackable for target, but not universally.')
     commandLineParser.add_argument('--vspec', action='store_true', help='if mulitple models passed in perts, last model is target. Label attackable sample only if attackable for target ONLY - no other model.')
     commandLineParser.add_argument('--pr_save_path', type=str, default='', help='path to save raw pr values for later plotting')
@@ -59,10 +59,9 @@ if __name__ == "__main__":
     dls = []
     num_featss = []
     for mname, mpath in zip(args.model_names, args.trained_model_paths):
-        trained_model_name = '-'.join(mname('-')[1:])
+        trained_model_name = '-'.join(mname.split('-')[1:])
         # Get embeddings per model
-        trained_model_name = mname.split('-')[-1]
-        dl, num_feats = model_embed(data, trained_model_name, args.trained_model_path, device, bs=args.bs, shuffle=False, num_classes=args.num_classes)
+        dl, num_feats = model_embed(data, trained_model_name, mpath, device, bs=args.bs, shuffle=False, num_classes=args.num_classes)
         dls.append(dl)
         num_featss.append(num_feats)
 
@@ -71,9 +70,9 @@ if __name__ == "__main__":
     models = []
     for mname, mpath, n in zip(args.model_names, args.model_paths, num_featss):
         if 'linear' in mname:
-            model = select_model('linear', model_path=mpath, num_classes=2, size=n)
+            model = select_model('linear', model_path=mpath, num_labels=2, size=n)
         elif 'fcn' in mname:
-            model = select_model('fcn', model_path=mpath, num_classes=2, size=n)
+            model = select_model('fcn', model_path=mpath, num_labels=2, size=n)
         else:
             raise ValueError("Need to be fcn or linear")
         model.to(device)
