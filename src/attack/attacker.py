@@ -70,7 +70,7 @@ class Attacker():
         return threshs, frac_attackable
 
     @staticmethod
-    def attack_frac_sweep_all(perts_all, , threshs=[0.001, 0.101, 0.201, 0.301, 0.401, 0.501, 0.601]):
+    def attack_frac_sweep_all(perts_all, threshs=[0.001, 0.101, 0.201, 0.301, 0.401, 0.501, 0.601]):
         '''
         Return fraction of attackable samples (over all models) at each perturbation size threshold
         '''

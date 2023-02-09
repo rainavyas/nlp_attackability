@@ -1,6 +1,7 @@
 import torch
 import random
 import logging
+import numpy as np
 
 def set_seeds(seed):
     torch.manual_seed(seed)
@@ -49,3 +50,9 @@ def print_log(out_str):
         logging.info(out_str)
     except:
         pass
+
+def get_best_f_score(precisions, recalls, beta=1.0):
+    f_scores = (1+beta**2)*((precisions*recalls)/((precisions*(beta**2))+recalls))
+    f_scores = np.nan_to_num(f_scores)
+    ind = np.argmax(f_scores)
+    return precisions[ind], recalls[ind], f_scores[ind]
