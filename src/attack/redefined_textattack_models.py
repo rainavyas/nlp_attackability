@@ -16,6 +16,8 @@ from textattack.transformations import WordSwapEmbedding
 
 from textattack.attack_recipes.attack_recipe import AttackRecipe
 
+from textattack.transformations import WordSwapMaskedLM
+
 import math
 
 
@@ -78,6 +80,64 @@ class TextFoolerJin2019(AttackRecipe):
         #
         # Greedily swap words with "Word Importance Ranking".
         #
+        search_method = GreedyWordSwapWIR(wir_method="delete")
+
+        return Attack(goal_function, constraints, transformation, search_method)
+
+class BAEGarg2019(AttackRecipe):
+    """Siddhant Garg and Goutham Ramakrishnan, 2019.
+
+    BAE: BERT-based Adversarial Examples for Text Classification.
+
+    https://arxiv.org/pdf/2004.01970
+
+    This is "attack mode" 1 from the paper, BAE-R, word replacement.
+
+    We present 4 attack modes for BAE based on the
+        R and I operations, where for each token t in S:
+        • BAE-R: Replace token t (See Algorithm 1)
+        • BAE-I: Insert a token to the left or right of t
+        • BAE-R/I: Either replace token t or insert a
+        token to the left or right of t
+        • BAE-R+I: First replace token t, then insert a
+        token to the left or right of t
+    """
+
+    @staticmethod
+    def build(model_wrapper, min_cos_sim=0.5):
+        #
+        transformation = WordSwapMaskedLM(
+            method="bae", max_candidates=50, min_confidence=0.0
+        )
+        #
+        # Don't modify the same word twice or stopwords.
+        #
+        constraints = [RepeatModification(), StopwordModification()]
+
+        # For the R operations we add an additional check for
+        # grammatical correctness of the generated adversarial example by filtering
+        # out predicted tokens that do not form the same part of speech (POS) as the
+        # original token t_i in the sentence.
+        constraints.append(PartOfSpeech(allow_verb_noun_swap=True))
+
+        # "To ensure semantic similarity on introducing perturbations in the input
+        # text, we filter the set of top-K masked tokens (K is a pre-defined
+        # constant) predicted by BERT-MLM using a Universal Sentence Encoder (USE)
+        # (Cer et al., 2018)-based sentence similarity scorer."
+        #
+        use_constraint = UniversalSentenceEncoder(
+            threshold=1-(math.acos(min_cos_sim)/math.pi), # angular_sim = 1- (arccos(cos_sim)/pi)
+            metric="angular",
+            compare_against_original=True,
+            window_size=15,
+            skip_text_shorter_than_window=True,
+        )
+        constraints.append(use_constraint)
+        #
+        # Goal is untargeted classification.
+        #
+        goal_function = UntargetedClassification(model_wrapper)
+
         search_method = GreedyWordSwapWIR(wir_method="delete")
 
         return Attack(goal_function, constraints, transformation, search_method)

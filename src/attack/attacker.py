@@ -3,7 +3,7 @@ from tqdm import tqdm
 import numpy as np
 
 from .model_wrapper import PyTorchModelWrapper
-from .redefined_textattack_models import TextFoolerJin2019
+from .redefined_textattack_models import TextFoolerJin2019, BAEGarg2019
 
 class Attacker():
 
@@ -44,6 +44,9 @@ class Attacker():
         if method == 'textfooler':
             cos_sim = 1-pert_size
             attack = TextFoolerJin2019.build(model_wrapper, min_cos_sim=cos_sim)
+        elif method == 'bae':
+            cos_sim = 1-pert_size
+            attack = BAEGarg2019.build(model_wrapper, min_cos_sim=cos_sim)
         return attack
 
     @staticmethod

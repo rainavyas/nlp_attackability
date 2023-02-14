@@ -35,11 +35,11 @@ if __name__ == "__main__":
         f.write(' '.join(sys.argv)+'\n')
 
     # Load the attacked test data labels
-    ds = select_attack_data(args, args.perts, thresh=args.thresh, use_val=False, val_for_train=False, spec=args.spec, vspec=args.vspec, robust=args.robust)
+    data = select_attack_data(args, args.perts, thresh=args.thresh, use_val=False, val_for_train=False, spec=args.spec, vspec=args.vspec, robust=args.robust)
     labels = []
-    for i in range(len(ds)):
-        _,l = ds[i]
-        labels.append(l.item())
+    for d in data:
+        l = d['attackability_label']
+        labels.append(l)
     
     # load the value as per measure
 
