@@ -34,7 +34,7 @@ if __name__ == "__main__":
         f.write(' '.join(sys.argv)+'\n')
 
     ps = [torch.load(p) for p in args.perts]
-    names = [n.split('/')[-1].split('_')[1] for n in args.perts]
+    names = [n.split('/')[-1].split('_')[0] for n in args.perts]
 
     if args.compare:
 
@@ -47,13 +47,13 @@ if __name__ == "__main__":
         spearman, _ = stats.spearmanr(p1, p2)
         print(f'PCC:\t{pcc}\nSpearman:\t{spearman}')
 
-        # # Scatter plot
-        # name1 = names[0]
-        # name2 = names[1]
-        # data = pd.DataFrame.from_dict({name1:p1, name2:p2})
-        # sns.jointplot(x = name1, y = name2, kind = "reg", data = data, scatter_kws={'s': 1})
-        # plt.savefig(args.plot, bbox_inches='tight')
-        # plt.clf()
+        # Scatter plot
+        name1 = names[0]
+        name2 = names[1]
+        data = pd.DataFrame.from_dict({name1:p1, name2:p2})
+        sns.jointplot(x = name1, y = name2, kind = "reg", data = data, scatter_kws={'s': 1})
+        plt.savefig(args.plot, bbox_inches='tight')
+        plt.clf()
 
     if args.binary_sweep:
         sns.set_style("darkgrid")
