@@ -52,7 +52,11 @@ if __name__ == "__main__":
 
     # Get minimum perturbation sizes per sample
     sentences = [d['text'] for d in data]
-    perts = Attacker.get_all_pert_sizes(sentences, model, method=args.attack_method)
+    if args.attack_method == 'bae':
+        sizes = [0.02, 0.05, 0.1, 0.2, 0.3, 0.4]
+    else:
+        sizes = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+    perts = Attacker.get_all_pert_sizes(sentences, model, method=args.attack_method, sizes=sizes)
     perts = torch.Tensor(perts)
 
     # Report mean and standard deviation

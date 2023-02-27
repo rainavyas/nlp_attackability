@@ -61,19 +61,22 @@ class Attacker():
         return True
 
     @staticmethod
-    def attack_frac_sweep(perts, threshs=[0.001, 0.101, 0.201, 0.301, 0.401, 0.501, 0.601]):
+    def attack_frac_sweep(perts, threshs=[0.001, 0.101, 0.201, 0.301, 0.401, 0.501, 0.601], robust=False):
         '''
         Return fraction of attackable samples at each perturbation size threshold
         '''
         size = len(perts)
         frac_attackable = []
         for t in threshs:
-            num_att = len([p for p in perts if p<=t])
+            if robust:
+                num_att = len([p for p in perts if p>t])
+            else:
+                num_att = len([p for p in perts if p<=t])
             frac_attackable.append(num_att/size)
         return threshs, frac_attackable
 
     @staticmethod
-    def attack_frac_sweep_all(perts_all, threshs=[0.001, 0.101, 0.201, 0.301, 0.401, 0.501, 0.601]):
+    def attack_frac_sweep_all(perts_all, threshs=[0.001, 0.101, 0.201, 0.301, 0.401, 0.501, 0.601], robust=False):
         '''
         Return fraction of attackable samples (over all models) at each perturbation size threshold
         '''
@@ -83,11 +86,15 @@ class Attacker():
             num_att = 0
             for sample in zip(*perts_all):
                 smaller = True
+                bigger = True
                 for pert in sample:
                     if pert > t:
                         smaller = False
-                        break
-                if smaller:
+                    if pert <= t:
+                        bigger = False
+                if smaller and not robust:
+                    num_att+=1
+                if bigger and robust:
                     num_att+=1
             frac_attackable.append(num_att/size)
         return threshs, frac_attackable
