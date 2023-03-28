@@ -6,6 +6,9 @@ from .model_wrapper import PyTorchModelWrapper
 from .redefined_textattack_models import TextFoolerJin2019, BAEGarg2019
 
 class Attacker():
+    '''
+    This Attacker class provides methods to find the minimum perturbation size to attack a sample
+    '''
 
     @classmethod
     def get_all_pert_sizes(cls, sentences, model, method='textfooler', sizes=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6]):
