@@ -22,6 +22,19 @@ def fool_rate(data):
                 fooled+=1
     return fooled/total
 
+def fool_rate_any(datas):
+    # assume we have the same model being attacked (with different attack methods)
+    total = 0
+    fooled = 0
+    for ds in zip(*datas):
+        if ds[0]['label'] == ds[0]['pred_label']:
+            total+=1
+            for d in ds:
+                if d['att_pred_label'] != d['label']:
+                    fooled+=1
+                    break
+    return fooled/total
+
 
 if __name__ == "__main__":
 
@@ -29,6 +42,7 @@ if __name__ == "__main__":
     commandLineParser = argparse.ArgumentParser()
     commandLineParser.add_argument('--json_path', type=str, nargs='+', required=True, help='saved .json file(s)')
     commandLineParser.add_argument('--fool', action='store_true', help='calulate fooling rate')
+    commandLineParser.add_argument('--fool_any', action='store_true', help='calulate fooling rate for multiple attack methods')
     args = commandLineParser.parse_args()
 
     # Save the command run
@@ -52,6 +66,10 @@ if __name__ == "__main__":
             print(f'Fooling Rate\t{fool_rate(d)}')
             print()
     
+    if args.fool_any:
+        # check if sample can be attacked by any attack method
+        print(f'Fooling Rate Any\t{fool_rate_any(datas)}')
+        print()
     
     
 

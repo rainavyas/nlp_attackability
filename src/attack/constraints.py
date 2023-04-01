@@ -1,3 +1,7 @@
+'''
+Only embedding-distance constraints considered here
+'''
+
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (
     InputColumnModification,
@@ -50,5 +54,4 @@ class Constraint():
             # skip_text_shorter_than_window=True,
             skip_text_shorter_than_window=False,
         )
-        # have to call encode once to create self.model
         return [use_constraint]
