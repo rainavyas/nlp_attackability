@@ -23,21 +23,13 @@ def _load_imdb(cache_dir, lim:int=None)->List[Dict['text', 'label']]:
     test       = list(dataset['test'])[:lim]
     return train, val, test
 
-def _load_twitter(cache_dir='data', lim:int=None)->List[Dict['text', 'label']]:
-    # Source: https://www.kaggle.com/datasets/parulpandey/emotion-dataset?select=test.csv
-    base_path = f'{cache_dir}/twitter/'
-    CLASS_TO_IND = {
-        '2': 2, # love
-        '1': 1, # joy
-        '4': 4, # fear
-        '3': 3, # anger
-        '5': 5, # surprise
-        '0': 0, # sadness
-    }
-    train = _read_file(f'{base_path}training.csv', CLASS_TO_IND)
-    val = _read_file(f'{base_path}validation.csv', CLASS_TO_IND)
-    test = _read_file(f'{base_path}test.csv', CLASS_TO_IND)
+def _twitter(cache_dir, lim:int=None):
+    dataset = load_dataset("dair-ai", cache_dir=cache_dir)
+    train = list(dataset['train'])[:lim]
+    val   = list(dataset['validation'])[:lim]
+    test  = list(dataset['test'])[:lim]
     return train, val, test
+
 
 def _load_dbpedia(cache_dir, lim:int=None):
     dataset = load_dataset("dbpedia_14", cache_dir=cache_dir)
