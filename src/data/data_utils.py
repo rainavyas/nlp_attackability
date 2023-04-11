@@ -23,7 +23,7 @@ def _load_imdb(cache_dir, lim:int=None)->List[Dict['text', 'label']]:
     test       = list(dataset['test'])[:lim]
     return train, val, test
 
-def _twitter(cache_dir, lim:int=None):
+def _load_twitter(cache_dir, lim:int=None):
     dataset = load_dataset("dair-ai", cache_dir=cache_dir)
     train = list(dataset['train'])[:lim]
     val   = list(dataset['validation'])[:lim]
