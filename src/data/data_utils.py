@@ -23,7 +23,7 @@ def _load_imdb(cache_dir, lim:int=None)->List[Dict['text', 'label']]:
     test       = list(dataset['test'])[:lim]
     return train, val, test
 
-def _load_twitter(cache_dir, lim:int=None)->List[Dict['text', 'label']]:
+def _load_twitter(cache_dir='data', lim:int=None)->List[Dict['text', 'label']]:
     # Source: https://www.kaggle.com/datasets/parulpandey/emotion-dataset?select=test.csv
     base_path = f'{cache_dir}/twitter/'
     CLASS_TO_IND = {
