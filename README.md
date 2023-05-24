@@ -1,6 +1,6 @@
 # Overview
 
-This is the code for the paper _Sample Attackability in Natural Language Adversarial Attacks_. This paper has been accepted at the [ACL Workshop 2023, TrustNLP: Third Workshop on Trustworthy Natural Language Processing](https://trustnlpworkshop.github.io/).
+This is the code for the paper _Sample Attackability in Natural Language Adversarial Attacks_. This paper has been accepted at the [ACL 2023 Workshop, TrustNLP: Third Workshop on Trustworthy Natural Language Processing](https://trustnlpworkshop.github.io/).
 
 ## Abstract
 
@@ -16,3 +16,7 @@ Adversarial attack research in natural language processing (NLP) has made signif
 Clone this repository.
 
 ## Running scripts
+
+The following pipeline demonstrates how to use the scripts to reproduce the results in the paper. For each step and example command is given - the passed arguments can be changed as desired.
+
+1) Train: `python train.py --out_dir experiments/trained_models --model_name xlnet-base-cased --data_name twitter --bs 8 --epochs 3 --lr 1e-5 --seed 1 --num_classes 6`
