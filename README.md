@@ -17,7 +17,7 @@ Clone this repository.
 
 ## Running scripts
 
-The following pipeline demonstrates how to use the scripts to reproduce the results in the paper. For each step and example command is given - the passed arguments can be changed as desired.
+The following pipeline demonstrates how to use the scripts to reproduce the results in the paper. For each step an example command is given - the passed arguments can be changed as needed.
 
 1. **Train standard classifier**: `python train.py --out_dir experiments/trained_models --model_name xlnet-base-cased --data_name twitter --bs 8 --epochs 3 --lr 1e-5 --seed 1 --num_classes 6`
 2. **Evaluate classifier performance**: `python eval.py --model_path_base experiments/trained_models/google-electra-base-discriminator_twitter_pretrainedTrue_seed --model_name google/electra-base-discriminator --data_name twitter --bs 8 --num_seeds 1 --num_classes 6`
